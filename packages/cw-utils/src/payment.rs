@@ -107,7 +107,7 @@ pub enum PaymentError {
     #[error("Must send '{0}' denoms")]
     IncorrectNumberOfDenoms(usize),
 
-    #[error("Zero amound sent for '{0}'")]
+    #[error("Zero amount sent for '{0}'")]
     ZeroAmountDenom(String),
 
     #[error("Received duplicate denom '{0}'")]
