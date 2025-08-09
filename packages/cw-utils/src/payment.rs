@@ -54,6 +54,30 @@ pub fn may_pay(info: &MessageInfo, denom: &str) -> Result<Uint256, PaymentError>
     }
 }
 
+/// Requires an exact set of denoms with amounts greater than zero.
+///
+/// This validates that:
+/// - At least one coin is provided in `info.funds`, otherwise returns [`PaymentError::NoFunds`].
+/// - The number of provided coins exactly matches the number of `required_denoms`,
+///   otherwise returns [`PaymentError::IncorrectNumberOfDenoms`].
+/// - No duplicate denoms are provided, otherwise returns [`PaymentError::DuplicateDenom`].
+/// - Every required denom is present, otherwise returns [`PaymentError::MissingDenom`].
+/// - All required denoms have a non-zero amount, otherwise returns [`PaymentError::ZeroAmountDenom`].
+///
+/// On success, returns the list of [`Coin`]s in the same order as `required_denoms`.
+///
+/// # Examples
+///
+/// ```
+/// use cosmwasm_std::{coin, testing::message_info};
+/// use cw_utils::{must_pay_many, PaymentError};
+///
+/// let sender = cosmwasm_std::Addr::unchecked("alice");
+/// let info = message_info(&sender, &[coin(50, "uatom"), coin(120, "wei")]);
+///
+/// let result = must_pay_many(&info, &["uatom", "wei"]);
+/// assert!(result.is_ok());
+/// ```
 pub fn must_pay_many(
     info: &MessageInfo,
     required_denoms: &[&str],
